@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel File Download</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .file-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 200px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-icon {
+            font-size: 48px;
+            color: #4285F4;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .download-options {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-card:hover .download-options {
+            opacity: 1;
+        }
+
+        .download-btn {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background-color: #3367D6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="file-container"></div>
+
+    <script>
+        const files = [
+            { name: 'Sales_Report.xlsx', size: '2.5 MB', url: '' },
+
+        ];
+
+        const fileContainer = document.getElementById('file-container');
+
+        files.forEach(file => {
+            const fileCard = document.createElement('div');
+            fileCard.className = 'file-card';
+            fileCard.innerHTML = `
+                <div class="file-icon">📊</div>
+                <div class="file-name">${file.name}</div>
+                <div class="file-size">${file.size}</div>
+                <div class="download-options">
+                    <button class="download-btn">Download</button>
+                </div>
+            `;
+
+            fileCard.addEventListener('click', () => downloadFile(file.url, file.name));
+
+            const downloadBtn = fileCard.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                downloadFile(file.url, file.name);
+            });
+
+            fileContainer.appendChild(fileCard);
+        });
+
+        function downloadFile(url, fileName) {
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = fileName;
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                })
+                .catch(console.error);
+        }
+    </script>
+</body>
+
+</html>
